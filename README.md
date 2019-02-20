@@ -3,11 +3,11 @@
 A V2EX application by Flutter
 
 ## Capture
-![Hot](https://github.com/KarelGT/DwarfDoc/blob/master/capture/device-2019-02-18-165154.png)
+![Hot](https://github.com/KarelGT/DwarfDoc/blob/master/capture/device-2019-02-18-165154.png){:heigh="50%" width="50%"}
 
-![Nodes](https://github.com/KarelGT/DwarfDoc/blob/master/capture/device-2019-02-18-165218.png)
+![Nodes](https://github.com/KarelGT/DwarfDoc/blob/master/capture/device-2019-02-18-165218.png){:heigh="50%" width="50%"}
 
-![Topic](https://github.com/KarelGT/DwarfDoc/blob/master/capture/device-2019-02-18-165258.png)
+![Topic](https://github.com/KarelGT/DwarfDoc/blob/master/capture/device-2019-02-18-165258.png){:heigh="50%" width="50%"}
 
 Api: https://github.com/djyde/V2EX-API
 
