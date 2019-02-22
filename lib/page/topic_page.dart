@@ -7,24 +7,26 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 class TopicPage extends StatefulWidget {
+  final int _topicId;
   final TopicWrap _topic;
 
-  TopicPage(this._topic);
+  TopicPage(this._topicId, this._topic);
 
   @override
   State<StatefulWidget> createState() {
-    return TopicState(_topic);
+    return TopicState(_topicId, _topic);
   }
 }
 
 class TopicState extends State<TopicPage> implements TopicContract.View {
   TopicWrap _topic;
+  int _topicId;
   List<ReplyWrap> _replies;
   TopicContract.Presenter _presenter;
 
-  TopicState(this._topic) {
+  TopicState(this._topicId, this._topic) {
     _replies = new List<ReplyWrap>();
-    _presenter = new TopicPresenter(this, _topic);
+    _presenter = new TopicPresenter(this, _topicId, _topic);
   }
 
   @override
@@ -38,7 +40,7 @@ class TopicState extends State<TopicPage> implements TopicContract.View {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text(_topic.title),
+        title: Text(_topic?.title ?? ''),
       ),
       body: Container(
         child: _createBody(_topic, _replies),
@@ -50,7 +52,7 @@ class TopicState extends State<TopicPage> implements TopicContract.View {
     return ListView.builder(
       itemBuilder: (BuildContext context, index) {
         if (index == 0 && _topicWrap != null) {
-          return _createContent(_topicWrap);
+          return _createTopicItem(_topicWrap);
         } else {
           return _createReplyItem(
               _replyWraps[index - (_topicWrap != null ? 1 : 0)]);
@@ -60,7 +62,7 @@ class TopicState extends State<TopicPage> implements TopicContract.View {
     );
   }
 
-  Widget _createContent(TopicWrap topicWrap) {
+  Widget _createTopicItem(TopicWrap topicWrap) {
     return Container(
       padding: EdgeInsets.all(10),
       child: Column(
@@ -216,6 +218,12 @@ class TopicState extends State<TopicPage> implements TopicContract.View {
         ],
       ),
     );
+  }
+  @override
+  void displayTopic(TopicWrap topic) {
+    setState(() {
+      _topic = topic;
+    });
   }
 
   @override

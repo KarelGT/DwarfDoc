@@ -10,6 +10,7 @@ import 'package:dwarf_doc/page/topic_contract.dart' as TopicContract;
 import 'package:dwarf_doc/util/logger.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/widgets.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TopicPresenter implements TopicContract.Presenter {
@@ -17,17 +18,40 @@ class TopicPresenter implements TopicContract.Presenter {
   TopicApi _topicApi;
   TopicContract.View _view;
   TopicWrap _topicWrap;
+  int _topicId;
   StreamSubscription _replySubscription;
 
-  TopicPresenter(this._view, this._topicWrap) {
+  TopicPresenter(this._view, this._topicId, _topicWrap) {
     _topicApi = TopicApi(Application.getInstance().httpModule);
   }
 
   @override
   void start() {
-    _replySubscription = _fetchReplies(_topicWrap.id)
-        .asStream()
-        .listen((replyWraps) => notifyDisplayReplies(replyWraps));
+    if (_topicWrap != null) {
+      notifyDisplayTopic(_topicWrap);
+      _replySubscription = _fetchReplies(_topicId)
+          .asStream()
+          .listen((replyWraps) => notifyDisplayReplies(replyWraps));
+    } else {
+      _replySubscription = Observable.zip2(
+              _fetchTopic(_topicId).asStream(),
+              _fetchReplies(_topicId).asStream(),
+              (topicWrap, replyWraps) => TopicContent(topicWrap, replyWraps))
+          .listen((topicContent){
+            _topicWrap = topicContent.topicWrap;
+            notifyDisplayTopic(_topicWrap);
+            notifyDisplayReplies(topicContent.replayWraps);
+      });
+    }
+  }
+
+  Future<TopicWrap> _fetchTopic(int topicId) async {
+    TopicWrap topicWrap;
+    var resp = await _topicApi.queryTopicById(topicId);
+    if (resp != null) {
+      topicWrap = TopicWrap(resp);
+    }
+    return topicWrap;
   }
 
   Future<List<ReplyWrap>> _fetchReplies(int topicId) async {
@@ -37,6 +61,10 @@ class TopicPresenter implements TopicContract.Presenter {
       replyWraps.add(ReplyWrap(value));
     });
     return replyWraps;
+  }
+
+  void notifyDisplayTopic(TopicWrap topicWrap) {
+    _view.displayTopic(topicWrap);
   }
 
   void notifyDisplayReplies(List<ReplyWrap> replyWraps) {
@@ -65,4 +93,11 @@ class TopicPresenter implements TopicContract.Presenter {
       _replySubscription.cancel();
     }
   }
+}
+
+class TopicContent {
+  TopicWrap topicWrap;
+  List<ReplyWrap> replayWraps;
+
+  TopicContent(this.topicWrap, this.replayWraps);
 }

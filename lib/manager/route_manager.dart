@@ -55,12 +55,16 @@ class RouteHandler {
 
   static Handler topicHandler = Handler(
       handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-    var topicWrap;
     var topicJson = params[RouteHub.topicParam]?.first;
+    var topicId = params[RouteHub.topicIdParam]?.first;
     if (topicJson != null && topicJson.isNotEmpty) {
-      topicWrap = TopicWrap(TopicResp.fromJson(json.decode(topicJson)));
+      var topicWrap = TopicWrap(TopicResp.fromJson(json.decode(topicJson)));
+      return TopicPage(topicWrap.id, topicWrap);
+    } else if(topicId != null && topicId.isNotEmpty){
+      return TopicPage(int.parse(topicId), null);
+    } else {
+      return TopicPage(-1, null);
     }
-    return TopicPage(topicWrap);
   });
 
   static Handler memberHandler = Handler(
@@ -76,6 +80,7 @@ class RouteHub {
 
   static String topicPath = '/topic';
   static String topicParam = 'topic';
+  static String topicIdParam = 'id';
 
   static String memberPath = '/member';
   static String usernameParam = 'username';

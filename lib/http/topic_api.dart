@@ -30,6 +30,14 @@ class TopicApi {
     return resps;
   }
 
+  Future<TopicResp> queryTopicById(int topicId) async {
+    List response = await _httpModule.get('/api/topics/show.json',
+        params: <String, String>{'id': '$topicId'});
+    List<TopicResp> resps =
+        response.map((value) => TopicResp.fromJson(value)).toList();
+    return resps.isEmpty ? null : resps.first;
+  }
+
   Future<List<ReplyResp>> queryRepliesByTopicId(int topicId) async {
     List response = await _httpModule.get('/api/replies/show.json',
         params: <String, String>{'topic_id': '$topicId'});
