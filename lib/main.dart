@@ -3,7 +3,8 @@ import 'package:dwarf_doc/page/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-void main() {
+void main() async {
+  await Application.getInstance().init();
   Application.getInstance().isDebug = true;
   debugPaintSizeEnabled = false;
   runApp(MyApp());
