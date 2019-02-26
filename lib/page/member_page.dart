@@ -125,7 +125,7 @@ class MemberState extends State<MemberPage> implements MemberContract.View {
 
   Widget _createUserItem(String title, String content) {
     return Offstage(
-      offstage: content != null || content.isEmpty,
+      offstage: content == null || content.isEmpty,
       child: Padding(
         padding: EdgeInsets.only(bottom: 10),
         child: Card(

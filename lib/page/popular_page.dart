@@ -102,4 +102,11 @@ class _PopularState extends State<PopularPage>
       }
     });
   }
+
+  @override
+  void dispose() {
+    _presenter.dispose();
+    super.dispose();
+  }
+
 }

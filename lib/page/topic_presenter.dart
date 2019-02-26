@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dwarf_doc/application.dart';
 import 'package:dwarf_doc/bean/reply_wrap.dart';
 import 'package:dwarf_doc/bean/topic_wrap.dart';
+import 'package:dwarf_doc/database/favorite_dao.dart';
 import 'package:dwarf_doc/http/reply_resp.dart';
 import 'package:dwarf_doc/http/topic_api.dart';
 import 'package:dwarf_doc/manager/route_manager.dart';
@@ -20,9 +21,11 @@ class TopicPresenter implements TopicContract.Presenter {
   TopicWrap _topicWrap;
   int _topicId;
   StreamSubscription _replySubscription;
+  FavoriteDao _favoriteDao;
 
   TopicPresenter(this._view, this._topicId, _topicWrap) {
     _topicApi = TopicApi(Application.getInstance().httpModule);
+    _favoriteDao = FavoriteDao();
   }
 
   @override
@@ -37,12 +40,15 @@ class TopicPresenter implements TopicContract.Presenter {
               _fetchTopic(_topicId).asStream(),
               _fetchReplies(_topicId).asStream(),
               (topicWrap, replyWraps) => TopicContent(topicWrap, replyWraps))
-          .listen((topicContent){
-            _topicWrap = topicContent.topicWrap;
-            notifyDisplayTopic(_topicWrap);
-            notifyDisplayReplies(topicContent.replayWraps);
+          .listen((topicContent) {
+        _topicWrap = topicContent.topicWrap;
+        notifyDisplayTopic(_topicWrap);
+        notifyDisplayReplies(topicContent.replayWraps);
       });
     }
+    _favoriteDao.queryTopicRespsByTopicId(_topicId).then((topics) {
+      _view.displayFavorite(topics != null && topics.isNotEmpty);
+    });
   }
 
   Future<TopicWrap> _fetchTopic(int topicId) async {
@@ -92,6 +98,17 @@ class TopicPresenter implements TopicContract.Presenter {
     if (_replySubscription != null) {
       _replySubscription.cancel();
     }
+  }
+
+  @override
+  void doFavorite(bool isFavorite, TopicWrap topic) {
+    Observable.just(isFavorite).flatMap((it) {
+      if (it) {
+        return _favoriteDao.saveOrUpdateTopicResp(topic.resp).asStream();
+      } else {
+        return _favoriteDao.deleteTopicResp(topic.id).asStream();
+      }
+    }).listen((value) => _view.displayFavorite(isFavorite));
   }
 }
 

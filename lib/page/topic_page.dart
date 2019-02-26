@@ -21,11 +21,13 @@ class TopicPage extends StatefulWidget {
 class TopicState extends State<TopicPage> implements TopicContract.View {
   TopicWrap _topic;
   int _topicId;
+  bool _isFavorite;
   List<ReplyWrap> _replies;
   TopicContract.Presenter _presenter;
 
   TopicState(this._topicId, this._topic) {
     _replies = new List<ReplyWrap>();
+    _isFavorite = false;
     _presenter = new TopicPresenter(this, _topicId, _topic);
   }
 
@@ -117,6 +119,15 @@ class TopicState extends State<TopicPage> implements TopicContract.View {
                     ),
                   ),
                 ),
+                GestureDetector(
+                  onTap: () => _presenter.doFavorite(!_isFavorite, topicWrap),
+                  child: Icon(
+                    _isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: _isFavorite
+                        ? Colors.pinkAccent[200]
+                        : Theme.of(context).primaryColor,
+                  ),
+                ),
               ],
             ),
           ),
@@ -164,7 +175,8 @@ class TopicState extends State<TopicPage> implements TopicContract.View {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               GestureDetector(
-                onTap: () => _presenter.openMember(context, replyWrap.member.name),
+                onTap: () =>
+                    _presenter.openMember(context, replyWrap.member.name),
                 child: Image.network(
                   replyWrap.member.avatar,
                   width: 24,
@@ -219,6 +231,7 @@ class TopicState extends State<TopicPage> implements TopicContract.View {
       ),
     );
   }
+
   @override
   void displayTopic(TopicWrap topic) {
     setState(() {
@@ -233,6 +246,13 @@ class TopicState extends State<TopicPage> implements TopicContract.View {
       if (replies != null) {
         _replies.addAll(replies);
       }
+    });
+  }
+
+  @override
+  displayFavorite(bool isFavorite) {
+    setState(() {
+      _isFavorite = isFavorite;
     });
   }
 

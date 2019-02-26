@@ -49,6 +49,6 @@ class Application {
   }
 
   Future<Database> getDatabase() async {
-    return _dbHelper.database;
+    return _dbHelper.getDatabase();
   }
 }
