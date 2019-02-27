@@ -9,4 +9,8 @@ class Presenter {
   void start() {}
 
   void openMember(BuildContext context, String username) {}
+
+  void openTopic(BuildContext context, int topicId){}
+
+  void detach() {}
 }

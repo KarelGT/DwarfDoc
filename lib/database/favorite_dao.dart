@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:dwarf_doc/application.dart';
+import 'package:dwarf_doc/database/db_event.dart';
 import 'package:dwarf_doc/http/topic_resp.dart';
+import 'package:event_bus/event_bus.dart';
 import 'package:sqflite/sqflite.dart';
 
 class FavoriteDao {
@@ -29,6 +31,7 @@ class FavoriteDao {
           [jsonEncode(topicResp), topicResp.id]);
     }
     await database.close();
+    Application.getInstance().eventBus.fire(FavoriteEvent());
     return id;
   }
 
@@ -38,6 +41,7 @@ class FavoriteDao {
     id = await database
         .delete(_TABLE_NAME, where: '$_TOPIC_ID = ?', whereArgs: [topicId]);
     await database.close();
+    Application.getInstance().eventBus.fire(FavoriteEvent());
     return id;
   }
 

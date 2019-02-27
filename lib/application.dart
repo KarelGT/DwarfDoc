@@ -3,6 +3,7 @@ import 'package:dwarf_doc/database/db_helper.dart';
 import 'package:dwarf_doc/http/http_module.dart';
 import 'package:dwarf_doc/http/ip_config.dart';
 import 'package:dwarf_doc/manager/route_manager.dart';
+import 'package:event_bus/event_bus.dart';
 import 'package:fluro/fluro.dart';
 import 'package:meta/meta.dart';
 import 'package:sqflite/sqflite.dart';
@@ -12,6 +13,7 @@ class Application {
   bool isDebug;
   HttpModule httpModule;
   Router router;
+  EventBus eventBus;
   DBHelper _dbHelper;
 
   static Application getInstance() {
@@ -27,6 +29,7 @@ class Application {
   Future init() async {
     _initHttpModule();
     _initRouter();
+    _initEventBus();
     _initDatabase();
   }
 
@@ -41,6 +44,10 @@ class Application {
 
   void _initRouter() {
     router = RouteManager.getInstance().router;
+  }
+
+  void _initEventBus() {
+    eventBus = EventBus();
   }
 
   void _initDatabase() async {

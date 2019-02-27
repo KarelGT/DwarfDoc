@@ -42,58 +42,61 @@ class FavoriteState extends State<FavoritePage>
   }
 
   Widget _createTopicItemView(TopicWrap topicWrap) {
-    return Card(
-      color: Colors.white,
-      elevation: 2,
-      child: Padding(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                topicWrap.title,
-                style: TextStyle(
-                    fontSize: 18, color: Theme.of(context).highlightColor),
-              ),
-            ),
-            Row(
-              children: <Widget>[
-                Image.network(
-                  topicWrap.member.avatar,
-                  fit: BoxFit.contain,
-                  width: 32,
-                  height: 32,
+    return GestureDetector(
+      onTap: () => _presenter.openTopic(context, topicWrap.id),
+      child: Card(
+        color: Colors.white,
+        elevation: 2,
+        child: Padding(
+          padding: EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  topicWrap.title,
+                  style: TextStyle(
+                      fontSize: 18, color: Theme.of(context).highlightColor),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      GestureDetector(
-                        onTap: () => _presenter.openMember(
-                            context, topicWrap.member.name),
-                        child: Text(
-                          topicWrap.member.name,
+              ),
+              Row(
+                children: <Widget>[
+                  Image.network(
+                    topicWrap.member.avatar,
+                    fit: BoxFit.contain,
+                    width: 32,
+                    height: 32,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () => _presenter.openMember(
+                              context, topicWrap.member.name),
+                          child: Text(
+                            topicWrap.member.name,
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Text(
+                          topicWrap.createdTime,
                           style: TextStyle(
                               color: Theme.of(context).primaryColor,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold),
+                              fontSize: 12),
                         ),
-                      ),
-                      Text(
-                        topicWrap.createdTime,
-                        style: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                            fontSize: 12),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -107,6 +110,12 @@ class FavoriteState extends State<FavoritePage>
         _topics.addAll(topics);
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _presenter.detach();
+    super.dispose();
   }
 
   @override

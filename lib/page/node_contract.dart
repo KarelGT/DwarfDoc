@@ -7,5 +7,6 @@ class View {
 
 class Presenter {
   void start() {}
-  void openTopicList(BuildContext context, NodeWrap nodeWrap){}
+
+  void openTopicList(BuildContext context, NodeWrap nodeWrap) {}
 }
