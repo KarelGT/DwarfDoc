@@ -1,5 +1,6 @@
 import 'package:dwarf_doc/bean/topic_wrap.dart';
 import 'package:dwarf_doc/page/favorite_contract.dart' as FavoriteContract;
+import 'package:dwarf_doc/page/favorite_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -18,7 +19,7 @@ class FavoriteState extends State<FavoritePage>
 
   FavoriteState() {
     _topics = List<TopicWrap>();
-    _presenter = new FavoriteContract.Presenter();
+    _presenter = FavoritePresenter(this);
   }
 
   @override
@@ -31,8 +32,9 @@ class FavoriteState extends State<FavoritePage>
   Widget build(BuildContext context) {
     return Container(
       child: GridView.builder(
-        gridDelegate:
-            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+        ),
         itemBuilder: (context, index) => _createTopicItemView(_topics[index]),
         itemCount: _topics.length,
       ),
@@ -43,7 +45,57 @@ class FavoriteState extends State<FavoritePage>
     return Card(
       color: Colors.white,
       elevation: 2,
-      child: Text(topicWrap.title),
+      child: Padding(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              child: Text(
+                topicWrap.title,
+                style: TextStyle(
+                    fontSize: 18, color: Theme.of(context).highlightColor),
+              ),
+            ),
+            Row(
+              children: <Widget>[
+                Image.network(
+                  topicWrap.member.avatar,
+                  fit: BoxFit.contain,
+                  width: 32,
+                  height: 32,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      GestureDetector(
+                        onTap: () => _presenter.openMember(
+                            context, topicWrap.member.name),
+                        child: Text(
+                          topicWrap.member.name,
+                          style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Text(
+                        topicWrap.createdTime,
+                        style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 

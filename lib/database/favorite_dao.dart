@@ -18,20 +18,25 @@ class FavoriteDao {
     int id = 0;
     var database = await Application.getInstance().getDatabase();
     var ret = await _queryTopicResps(database, topicId: topicResp.id);
-    if(ret == null || ret.isEmpty) {
-      id = await database.rawInsert('INSERT INTO $_TABLE_NAME($_TOPIC_ID, $_TOPIC_RESP) VALUES (?, ?)', [topicResp.id, jsonEncode(topicResp)]);
+    if (ret == null || ret.isEmpty) {
+      id = await database.rawInsert(
+          'INSERT INTO $_TABLE_NAME($_TOPIC_ID, $_TOPIC_RESP) VALUES (?, ?)',
+          [topicResp.id, jsonEncode(topicResp)]);
     } else {
       id = ret.first.id;
-      await database.rawUpdate('UPDATE $_TABLE_NAME SET $_TOPIC_RESP = ? WHERE $_TOPIC_ID = ?', [jsonEncode(topicResp), topicResp.id]);
+      await database.rawUpdate(
+          'UPDATE $_TABLE_NAME SET $_TOPIC_RESP = ? WHERE $_TOPIC_ID = ?',
+          [jsonEncode(topicResp), topicResp.id]);
     }
     await database.close();
     return id;
   }
 
-  Future<int> deleteTopicResp(int topicId) async{
+  Future<int> deleteTopicResp(int topicId) async {
     int id = 0;
     var database = await Application.getInstance().getDatabase();
-    id = await database.delete(_TABLE_NAME, where: '$_TOPIC_ID = ?', whereArgs: [topicId]);
+    id = await database
+        .delete(_TABLE_NAME, where: '$_TOPIC_ID = ?', whereArgs: [topicId]);
     await database.close();
     return id;
   }
@@ -60,7 +65,8 @@ class FavoriteDao {
     return ret;
   }
 
-  Future<List<TopicResp>> _queryTopicResps(Database database, {int id, int topicId}) async {
+  Future<List<TopicResp>> _queryTopicResps(Database database,
+      {int id, int topicId}) async {
     List<TopicResp> ret = List<TopicResp>();
     String where;
     List<dynamic> whereArgs;
@@ -75,7 +81,9 @@ class FavoriteDao {
         columns: [_ID, _TOPIC_ID, _TOPIC_RESP],
         where: where,
         whereArgs: whereArgs);
-    ret = list.map((value) => TopicResp.fromJson(jsonDecode(value[_TOPIC_RESP]))).toList();
+    ret = list
+        .map((value) => TopicResp.fromJson(jsonDecode(value[_TOPIC_RESP])))
+        .toList();
     return ret;
   }
 }
