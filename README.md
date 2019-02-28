@@ -1,15 +1,42 @@
 # dwarf_doc
 
-A V2EX application by Flutter
+用Flutter写的简单V2EX客户端，实现了基本的帖子浏览的功能，新增本地的收藏功能。
+
+整体为简单的MVP结构。
+
+用到的开源库：
+
+* dio Http请求
+* fluro 路由
+* flutter_html 简单HTML页面的渲染
+* rxdart Rx
+* intl 格式化日期
+* url_launcher 打开URL
+* sqflite SQLite数据库
+* event_bus 事件收发
+
+
 
 ## Capture
-![Hot](https://github.com/KarelGT/DwarfDoc/blob/master/capture/device-2019-02-18-165154.png)
+![Hot](capture/img_hot.png)
 
-![Nodes](https://github.com/KarelGT/DwarfDoc/blob/master/capture/device-2019-02-18-165218.png)
+![Nodes](capture/img_node.png)
 
-![Topic](https://github.com/KarelGT/DwarfDoc/blob/master/capture/device-2019-02-18-165258.png)
 
-Api: https://github.com/djyde/V2EX-API
+
+![Favorite](capture/img_favorite.png)
+
+![Topic](capture/img_topic.png)
+
+
+
+## API
+
+API接口来自[这里](https://github.com/djyde/V2EX-API)
+
+列表相关的分页参数好像都是无效的，要是有知道的同学告诉我一下哈
+
+
 
 
 ## Getting Started
