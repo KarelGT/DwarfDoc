@@ -1,9 +1,9 @@
 import 'dart:convert';
 
+import 'package:async/async.dart';
 import 'package:dwarf_doc/application.dart';
 import 'package:dwarf_doc/bean/node_wrap.dart';
 import 'package:dwarf_doc/http/node_api.dart';
-import 'package:dwarf_doc/http/node_resp.dart';
 import 'package:dwarf_doc/manager/route_manager.dart';
 import 'package:dwarf_doc/page/node_contract.dart' as NodeContract;
 import 'package:fluro/fluro.dart';
@@ -13,6 +13,7 @@ class NodePresenter implements NodeContract.Presenter {
   static const String _TAG = "NodePresenter";
   NodeApi _nodeApi;
   NodeContract.View _view;
+  CancelableOperation<List<NodeWrap>> _cancelableOperation;
 
   NodePresenter(NodeContract.View view) {
     _view = view;
@@ -26,14 +27,28 @@ class NodePresenter implements NodeContract.Presenter {
     });
   }
 
-  Future<List<NodeWrap>> _fetchNodes() async {
-    List<NodeResp> nodeResps = await _nodeApi.queryAllNodes();
-    List<NodeWrap> nodeWraps = List<NodeWrap>();
-    nodeResps.forEach((item) {
-      nodeWraps.add(NodeWrap(item));
+  @override
+  Future fetchNodes() async {
+    await _fetchNodes().then((List<NodeWrap> nodeWraps) {
+      _view.displayNodes(nodeWraps);
     });
-    nodeWraps.sort((a, b) => b.topics - a.topics);
-    return nodeWraps;
+  }
+
+  Future<List<NodeWrap>> _fetchNodes() async {
+    if (_cancelableOperation != null) {
+      _cancelableOperation.cancel();
+      _cancelableOperation = null;
+    }
+    _cancelableOperation = CancelableOperation.fromFuture(
+        _nodeApi.queryAllNodes().then((nodeResps) {
+      List<NodeWrap> nodeWraps = List<NodeWrap>();
+      nodeResps.forEach((item) {
+        nodeWraps.add(NodeWrap(item));
+      });
+      nodeWraps.sort((a, b) => b.topics - a.topics);
+      return nodeWraps;
+    }));
+    return _cancelableOperation.value;
   }
 
   @override
