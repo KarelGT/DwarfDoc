@@ -8,5 +8,7 @@ class View {
 class Presenter {
   void start() {}
 
+  Future fetchNodes() async {}
+
   void openTopicList(BuildContext context, NodeWrap nodeWrap) {}
 }

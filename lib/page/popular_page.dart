@@ -32,14 +32,18 @@ class _PopularState extends State<PopularPage>
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      child: ListView.separated(
-          itemBuilder: (BuildContext context, int index) {
-            return _createTopicItem(_topics[index]);
-          },
-          separatorBuilder: (BuildContext context, int index) {
-            return Divider(color: Theme.of(context).primaryColor);
-          },
-          itemCount: _topics.length),
+      child: RefreshIndicator(
+          child: ListView.separated(
+              itemBuilder: (BuildContext context, int index) {
+                return _createTopicItem(_topics[index]);
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return Divider(color: Theme.of(context).primaryColor);
+              },
+              itemCount: _topics.length),
+          onRefresh: () async {
+            await _presenter.fetchTopics();
+          }),
     );
   }
 
@@ -108,5 +112,4 @@ class _PopularState extends State<PopularPage>
     _presenter.dispose();
     super.dispose();
   }
-
 }

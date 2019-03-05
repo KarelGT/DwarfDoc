@@ -32,14 +32,16 @@ class _NodeState extends State<NodePage>
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      child: GridView.builder(
-        gridDelegate:
-            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
-        itemBuilder: (context, index) {
-          return _createNodeItemView(_nodeWraps[index]);
-        },
-        itemCount: _nodeWraps.length,
-      ),
+      child: RefreshIndicator(
+          child: GridView.builder(
+            gridDelegate:
+                SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+            itemBuilder: (context, index) {
+              return _createNodeItemView(_nodeWraps[index]);
+            },
+            itemCount: _nodeWraps.length,
+          ),
+          onRefresh: ()=>_presenter.fetchNodes()),
     );
   }
 
@@ -47,7 +49,9 @@ class _NodeState extends State<NodePage>
     return GestureDetector(
       onTap: () => _presenter.openTopicList(context, nodeWrap),
       child: Container(
-        decoration: BoxDecoration(border: Border.all(color: Theme.of(context).primaryColor, width: 0.5)),
+        decoration: BoxDecoration(
+            border:
+                Border.all(color: Theme.of(context).primaryColor, width: 0.5)),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

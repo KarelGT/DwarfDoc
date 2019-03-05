@@ -8,6 +8,8 @@ class View {
 class Presenter {
   void start() {}
 
+  Future fetchTopics() async {}
+
   void openTopic(BuildContext context, TopicWrap topicWrap) {}
 
   void dispose() {}
